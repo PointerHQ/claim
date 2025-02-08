@@ -1,0 +1,12 @@
+/* Webfont: ProtoMono-Regular */@font-face {
+    font-family: 'ProtoMono';
+    src: url('ProtoMono-Regular.eot'); /* IE9 Compat Modes */
+    src: url('ProtoMono-Regular.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+         url('ProtoMono-Regular.woff') format('woff'), /* Modern Browsers */
+         url('ProtoMono-Regular.ttf') format('truetype'), /* Safari, Android, iOS */
+         url('ProtoMono-Regular.svg#ProtoMono-Regular') format('svg'); /* Legacy iOS */
+    font-style: normal;
+    font-weight: normal;
+    text-rendering: optimizeLegibility;
+}
+

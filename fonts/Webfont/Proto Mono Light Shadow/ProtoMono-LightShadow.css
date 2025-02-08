@@ -1,0 +1,12 @@
+/* Webfont: ProtoMono-LightShadow */@font-face {
+    font-family: 'ProtoMonoLightShadow';
+    src: url('ProtoMono-LightShadow.eot'); /* IE9 Compat Modes */
+    src: url('ProtoMono-LightShadow.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+         url('ProtoMono-LightShadow.woff') format('woff'), /* Modern Browsers */
+         url('ProtoMono-LightShadow.ttf') format('truetype'), /* Safari, Android, iOS */
+         url('ProtoMono-LightShadow.svg#ProtoMono-LightShadow') format('svg'); /* Legacy iOS */
+    font-style: normal;
+    font-weight: normal;
+    text-rendering: optimizeLegibility;
+}
+

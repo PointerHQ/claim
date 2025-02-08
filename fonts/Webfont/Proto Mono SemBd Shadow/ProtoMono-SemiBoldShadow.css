@@ -1,0 +1,12 @@
+/* Webfont: ProtoMono-SemiBoldShadow */@font-face {
+    font-family: 'ProtoMonoSemBdShadow';
+    src: url('ProtoMono-SemiBoldShadow.eot'); /* IE9 Compat Modes */
+    src: url('ProtoMono-SemiBoldShadow.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+         url('ProtoMono-SemiBoldShadow.woff') format('woff'), /* Modern Browsers */
+         url('ProtoMono-SemiBoldShadow.ttf') format('truetype'), /* Safari, Android, iOS */
+         url('ProtoMono-SemiBoldShadow.svg#ProtoMono-SemiBoldShadow') format('svg'); /* Legacy iOS */
+    font-style: normal;
+    font-weight: normal;
+    text-rendering: optimizeLegibility;
+}
+

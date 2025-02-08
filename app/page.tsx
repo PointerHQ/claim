@@ -1,101 +1,113 @@
 import Image from "next/image";
+import { CursorMountain } from "./components/cursor-mountain";
+import { ClaimHandleForm } from "./components/claim-handle-form";
+import { NoiseBackground } from "./components/noise-background";
 
 export default function Home() {
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="https://nextjs.org/icons/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+    <div className="min-h-screen bg-[#faf9f6] selection:bg-black selection:text-white overflow-hidden">
+      <NoiseBackground />
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 py-12 sm:py-24 lg:px-8">
+        {/* Header */}
+        <header className="max-w-2xl mx-auto text-center">
+          <h1 className="text-4xl font-bold tracking-tight sm:text-6xl [text-wrap:balance] text-black [font-family:var(--font-proto-mono-semibold-shadow)]">
+            Pointer
+          </h1>
+          <p className="mt-4 sm:mt-6 text-base sm:text-lg text-neutral-600 mx-auto leading-relaxed [font-family:var(--font-proto-mono-light)]">
+            The Generalist Browser Agent for Everyone
+          </p>
+        </header>
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="https://nextjs.org/icons/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+        {/* Main Content */}
+        <main className="mt-12 sm:mt-24">
+          <div className="relative mx-auto flex max-w-3xl flex-col items-center">
+            {/* Claim Handle Form */}
+            <p className="text-sm sm:text-base text-neutral-500 mb-4 sm:mb-6 text-center [font-family:var(--font-proto-mono-light)]">
+              Claim your personal operator
+            </p>
+            <div className="w-full max-w-md z-10 relative mb-12 sm:mb-24">
+              <ClaimHandleForm />
+            </div>
+
+            {/* Container for Cursor Mountain and Static Image */}
+            <div className="relative w-full aspect-[4/3] sm:aspect-[16/9]">
+              {/* Interactive Cursor Mountain (Desktop) */}
+              <div className="absolute inset-0 transition-opacity duration-500 z-0">
+                <CursorMountain />
+              </div>
+
+              {/* Static Image (Mobile) */}
+              <div className="absolute inset-0 md:hidden">
+                <Image
+                  src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-BWA6Xjdzzt6yDOVmhnU6fsj4LRDj9y.png"
+                  alt="Multiple cursor icons forming a mountain shape"
+                  fill
+                  className="object-contain"
+                  priority
+                />
+              </div>
+            </div>
+
+            {/* Footer Section */}
+            <footer className="w-full mt-16 sm:mt-24 flex flex-col items-center space-y-8 sm:space-y-12 px-4">
+              {/* Research Badge */}
+              <div className="flex items-center justify-center gap-2 px-4 py-2 bg-neutral-50 rounded-full">
+                <span className="text-xs sm:text-sm [font-family:var(--font-proto-mono-light)] text-neutral-600">
+                  Designed from HCI * AI research
+                </span>
+              </div>
+
+              {/* Domain and Year */}
+              <div className="text-center space-y-2">
+                <a
+                  href="https://trypointer.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Visit trypointer.com (opens in new tab)"
+                  className="text-lg sm:text-xl [font-family:var(--font-proto-mono-semibold-shadow)] text-neutral-900 hover:text-black transition-colors inline-flex items-center gap-1.5 group"
+                >
+                  trypointer.com
+                  <svg 
+                    viewBox="0 0 15 15" 
+                    className="w-4 h-4 opacity-0 -translate-y-0.5 group-hover:opacity-100 transition-all duration-200"
+                    fill="none"
+                    aria-hidden="true"
+                  >
+                    <path 
+                      d="M3.64645 11.3536C3.45118 11.1583 3.45118 10.8417 3.64645 10.6465L10.2929 4L6 4C5.72386 4 5.5 3.77614 5.5 3.5C5.5 3.22386 5.72386 3 6 3L11.5 3C11.7761 3 12 3.22386 12 3.5L12 9C12 9.27614 11.7761 9.5 11.5 9.5C11.2239 9.5 11 9.27614 11 9L11 4.70711L4.35355 11.3536C4.15829 11.5488 3.84171 11.5488 3.64645 11.3536Z" 
+                      fill="currentColor" 
+                      fillRule="evenodd" 
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                </a>
+                <p className="text-xs sm:text-sm [font-family:var(--font-proto-mono-light)] text-neutral-500">
+                  2025
+                </p>
+              </div>
+
+              {/* Social Links */}
+              <div className="flex items-center justify-center gap-4">
+                <a 
+                  href="https://x.com/pointerinc" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="p-2.5 rounded-full hover:bg-neutral-100 transition-colors group"
+                  aria-label="Follow @pointerinc on X (formerly Twitter)"
+                >
+                  <svg 
+                    viewBox="0 0 24 24" 
+                    aria-hidden="true" 
+                    className="h-5 w-5 fill-neutral-600 group-hover:fill-neutral-900 transition-colors"
+                  >
+                    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+                  </svg>
+                </a>
+              </div>
+            </footer>
+          </div>
+        </main>
+      </div>
     </div>
   );
 }
