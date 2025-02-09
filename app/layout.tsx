@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import localFont from "next/font/local";
 import "./globals.css";
+import PostHogPageview from '../components/PostHogPageview';
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -35,7 +36,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`${inter.className} ${protoMonoSemiBoldShadow.variable} ${protoMonoLight.variable} ${protoMonoRegular.variable}`}>{children}</body>
+      <body className={`${inter.className} ${protoMonoSemiBoldShadow.variable} ${protoMonoLight.variable} ${protoMonoRegular.variable}`}>
+        <PostHogPageview />
+        {children}
+      </body>
     </html>
   );
 }

@@ -7,6 +7,7 @@ import { motion, AnimatePresence } from "framer-motion"
 import { useSoundEffects } from "./sound-effects"
 import { config } from "../config"
 import axios from 'axios'
+import { posthog } from '../../lib/posthog'
 
 // Debounce utility
 function useDebounce<T>(value: T, delay: number): T {
@@ -146,7 +147,15 @@ export function ClaimHandleForm({
         }
       });
       
-      return data.count === 0;
+      const isAvailable = data.count === 0;
+      
+      // Track handle check
+      posthog.capture('handle_availability_check', {
+        handle,
+        is_available: isAvailable
+      });
+      
+      return isAvailable;
     } catch (error) {
       console.error('Error checking handle:', error);
       throw new Error('Unable to verify handle availability. Please try again.');
@@ -240,54 +249,75 @@ export function ClaimHandleForm({
     e.preventDefault()
     setError(null)
     
-    // 🤫 Hey there, curious developer! 
-    // Interested in working on general purpose agents or "generalist agents"?
-    // We have a big backlog of ideas to reach SOTA (State of the Art).
-    // DM @sourcetms on Twitter if you want to collaborate!
-    // Let's push the boundaries of what's possible together 🚀
-    
     if (!showExtendedForm && isValid) {
       if (!isValidHandle(handle)) {
-        setError('Handle can only contain letters, numbers, underscores, and hyphens');
-        return;
+        setError("Invalid handle format")
+        posthog.capture('handle_validation_error', {
+          handle,
+          error: 'invalid_format'
+        });
+        return
       }
       
+      setIsSubmitting(true)
       try {
-        setIsSubmitting(true)
-        const isAvailable = await checkHandleAvailability(handle);
-        
+        const isAvailable = await checkHandleAvailability(handle)
         if (!isAvailable) {
-          setError('This handle is already taken');
-          setIsSubmitting(false)
-          return;
+          setError("This handle is already taken")
+          posthog.capture('handle_validation_error', {
+            handle,
+            error: 'already_taken'
+          });
+          return
         }
-
-        handleFormStateChange(true);
-        playSound('step1');
-        setShowSuccess(true);
+        
+        handleFormStateChange(true)
+        playSound('step1')
+        
+        posthog.capture('handle_validated', {
+          handle
+        });
       } catch (error) {
-        setError('An error occurred. Please try again.');
+        setError("Error checking handle availability")
+        posthog.capture('handle_validation_error', {
+          handle,
+          error: 'availability_check_failed'
+        });
       } finally {
         setIsSubmitting(false)
       }
-      return;
+      return
     }
 
     if (showExtendedForm && isExtendedFormValid) {
+      setIsSubmitting(true)
       try {
-        setIsSubmitting(true)
-        
-        // Check if email exists
-        const emailExists = await checkEmailExists(email);
+        const emailExists = await checkEmailExists(email)
         if (emailExists) {
-          setError('This email has already been registered');
-          setIsSubmitting(false)
-          return;
+          setError("This email has already been used")
+          posthog.capture('form_submission_error', {
+            error: 'email_already_used'
+          });
+          return
         }
 
+        const count = await getTotalSubmissions()
+        if (count >= 300) {
+          setError("Sorry, all spots have been taken")
+          posthog.capture('form_submission_error', {
+            error: 'no_spots_available'
+          });
+          return
+        }
+
+        // Track successful submission
+        posthog.capture('handle_claimed', {
+          handle,
+          position: count + 1
+        });
+
         // Get current position
-        const currentCount = await getTotalSubmissions();
-        const position = currentCount + 1;
+        const position = count + 1;
 
         // Submit to NocoDB
         const nocodbResponse = await fetch(`https://app.nocodb.com/api/v2/tables/${process.env.NEXT_PUBLIC_NOCODB_TABLE_ID}/records`, {
@@ -355,13 +385,15 @@ export function ClaimHandleForm({
         }
 
         // Update UI state
-        updateSpotsAfterSubmission(currentCount);
+        updateSpotsAfterSubmission(count);
         setShowCompletion(true);
         playSound('completion');
         onComplete?.(handle, position);
       } catch (error) {
-        console.error('Submission error:', error);
-        setError('An error occurred while submitting. Please try again.');
+        setError("Error submitting form")
+        posthog.capture('form_submission_error', {
+          error: 'submission_failed'
+        });
       } finally {
         setIsSubmitting(false)
       }
