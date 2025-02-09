@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import localFont from "next/font/local";
+import { Suspense } from "react";
 import "./globals.css";
-import PostHogPageview from '../components/PostHogPageview';
+import PostHogPageview from './components/PostHogPageview';
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -37,7 +38,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.className} ${protoMonoSemiBoldShadow.variable} ${protoMonoLight.variable} ${protoMonoRegular.variable}`}>
-        <PostHogPageview />
+        <Suspense fallback={null}>
+          <PostHogPageview />
+        </Suspense>
         {children}
       </body>
     </html>
