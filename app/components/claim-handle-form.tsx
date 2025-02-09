@@ -248,19 +248,21 @@ export function ClaimHandleForm({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError(null)
+    setIsSubmitting(true)
     
-    if (!showExtendedForm && isValid) {
-      if (!isValidHandle(handle)) {
-        setError("Invalid handle format")
-        posthog.capture('handle_validation_error', {
-          handle,
-          error: 'invalid_format'
-        });
-        return
-      }
-      
-      setIsSubmitting(true)
-      try {
+    try {
+      // First form step - handle validation
+      if (!showExtendedForm && isValid) {
+        if (!isValidHandle(handle)) {
+          setError("Invalid handle format")
+          posthog.capture('handle_validation_error', {
+            handle,
+            error: 'invalid_format'
+          });
+          return;
+        }
+        
+        // Check handle availability
         const isAvailable = await checkHandleAvailability(handle)
         if (!isAvailable) {
           setError("This handle is already taken")
@@ -268,135 +270,144 @@ export function ClaimHandleForm({
             handle,
             error: 'already_taken'
           });
-          return
+          return;
         }
         
+        // If we get here, handle is valid and available
         handleFormStateChange(true)
         playSound('step1')
-        
         posthog.capture('handle_validated', {
           handle
         });
-      } catch (error) {
-        setError("Error checking handle availability")
-        posthog.capture('handle_validation_error', {
-          handle,
-          error: 'availability_check_failed'
-        });
-      } finally {
-        setIsSubmitting(false)
+        return;
       }
-      return
-    }
 
-    if (showExtendedForm && isExtendedFormValid) {
-      setIsSubmitting(true)
-      try {
+      // Second form step - full submission
+      if (showExtendedForm && isExtendedFormValid) {
+        // Recheck handle availability
+        const isHandleStillAvailable = await checkHandleAvailability(handle)
+        if (!isHandleStillAvailable) {
+          setError("Sorry, this handle was just taken. Please choose another one.")
+          handleFormStateChange(false)
+          posthog.capture('handle_validation_error', {
+            handle,
+            error: 'taken_during_submission'
+          });
+          return;
+        }
+
+        // Check email uniqueness
         const emailExists = await checkEmailExists(email)
         if (emailExists) {
           setError("This email has already been used")
           posthog.capture('form_submission_error', {
             error: 'email_already_used'
           });
-          return
+          return;
         }
 
+        // Check spots availability
         const count = await getTotalSubmissions()
         if (count >= 300) {
           setError("Sorry, all spots have been taken")
           posthog.capture('form_submission_error', {
             error: 'no_spots_available'
           });
-          return
+          return;
         }
 
-        // Track successful submission
-        posthog.capture('handle_claimed', {
-          handle,
-          position: count + 1
-        });
-
-        // Get current position
-        const position = count + 1;
-
-        // Submit to NocoDB
-        const nocodbResponse = await fetch(`https://app.nocodb.com/api/v2/tables/${process.env.NEXT_PUBLIC_NOCODB_TABLE_ID}/records`, {
-          method: 'POST',
-          headers: {
-            'xc-token': process.env.NEXT_PUBLIC_NOCODB_API_KEY || '',
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            Handle: handle,
-            Email: email,
-            "Full Name": fullName,
-            Position: position,
-          }),
-        });
-
-        if (!nocodbResponse.ok) {
-          throw new Error('Failed to submit to database');
-        }
-
-        // Send to Slack webhook
+        // If we get here, we can proceed with submission
         try {
-          await fetch('/api/slack', {
+          // Submit to NocoDB
+          const nocodbResponse = await fetch(`https://app.nocodb.com/api/v2/tables/${process.env.NEXT_PUBLIC_NOCODB_TABLE_ID}/records`, {
             method: 'POST',
             headers: {
+              'xc-token': process.env.NEXT_PUBLIC_NOCODB_API_KEY || '',
               'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-              text: `🎉 New Handle Claimed!\n*Handle:* ${handle}\n*Name:* ${fullName}\n*Email:* ${email}\n*Position:* ${position}`,
-              blocks: [
-                {
-                  type: 'section',
-                  text: {
-                    type: 'mrkdwn',
-                    text: '🎉 *New Handle Claimed!*'
-                  }
-                },
-                {
-                  type: 'section',
-                  fields: [
-                    {
-                      type: 'mrkdwn',
-                      text: `*Handle:*\n${handle}`
-                    },
-                    {
-                      type: 'mrkdwn',
-                      text: `*Name:*\n${fullName}`
-                    },
-                    {
-                      type: 'mrkdwn',
-                      text: `*Email:*\n${email}`
-                    },
-                    {
-                      type: 'mrkdwn',
-                      text: `*Position:*\n${position}`
-                    }
-                  ]
-                }
-              ]
-            })
+              Handle: handle,
+              Email: email,
+              "Full Name": fullName,
+              Position: count + 1,
+            }),
           });
-        } catch (slackError) {
-          console.error('Failed to send Slack notification:', slackError);
-          // Don't throw error here - we still want to proceed if Slack fails
-        }
 
-        // Update UI state
-        updateSpotsAfterSubmission(count);
-        setShowCompletion(true);
-        playSound('completion');
-        onComplete?.(handle, position);
-      } catch (error) {
-        setError("Error submitting form")
-        posthog.capture('form_submission_error', {
-          error: 'submission_failed'
-        });
-      } finally {
-        setIsSubmitting(false)
+          if (!nocodbResponse.ok) {
+            throw new Error('Failed to submit to database');
+          }
+
+          // Track successful submission
+          posthog.capture('handle_claimed', {
+            handle,
+            position: count + 1
+          });
+
+          // Send to Slack webhook
+          try {
+            await fetch('/api/slack', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                text: `🎉 New Handle Claimed!\n*Handle:* ${handle}\n*Name:* ${fullName}\n*Email:* ${email}\n*Position:* ${count + 1}`,
+                blocks: [
+                  {
+                    type: 'section',
+                    text: {
+                      type: 'mrkdwn',
+                      text: '🎉 *New Handle Claimed!*'
+                    }
+                  },
+                  {
+                    type: 'section',
+                    fields: [
+                      {
+                        type: 'mrkdwn',
+                        text: `*Handle:*\n${handle}`
+                      },
+                      {
+                        type: 'mrkdwn',
+                        text: `*Name:*\n${fullName}`
+                      },
+                      {
+                        type: 'mrkdwn',
+                        text: `*Email:*\n${email}`
+                      },
+                      {
+                        type: 'mrkdwn',
+                        text: `*Position:*\n${count + 1}`
+                      }
+                    ]
+                  }
+                ]
+              })
+            });
+          } catch (slackError) {
+            console.error('Failed to send Slack notification:', slackError);
+          }
+
+          // Update UI state
+          updateSpotsAfterSubmission(count);
+          setShowCompletion(true);
+          playSound('completion');
+          onComplete?.(handle, count + 1);
+        } catch (error) {
+          setError("Error submitting form. Please try again.")
+          posthog.capture('form_submission_error', {
+            error: 'submission_failed'
+          });
+          return;
+        }
       }
+    } catch (error) {
+      setError("An unexpected error occurred. Please try again.")
+      posthog.capture('form_submission_error', {
+        error: 'unexpected_error'
+      });
+    } finally {
+      setIsSubmitting(false)
     }
   }
 
