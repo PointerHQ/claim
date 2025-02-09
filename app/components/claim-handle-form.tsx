@@ -240,6 +240,12 @@ export function ClaimHandleForm({
     e.preventDefault()
     setError(null)
     
+    // 🤫 Hey there, curious developer! 
+    // Interested in working on general purpose agents or "generalist agents"?
+    // We have a big backlog of ideas to reach SOTA (State of the Art).
+    // DM @sourcetms on Twitter if you want to collaborate!
+    // Let's push the boundaries of what's possible together 🚀
+    
     if (!showExtendedForm && isValid) {
       if (!isValidHandle(handle)) {
         setError('Handle can only contain letters, numbers, underscores, and hyphens');
