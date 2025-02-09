@@ -61,43 +61,63 @@ export function CursorMountain() {
     }
   }, [])
 
-  // Initialize cursors
+  // Initialize cursors with responsive positioning
   useEffect(() => {
     if (!containerRef.current) return
 
-    const width = containerRef.current.offsetWidth
-    const height = containerRef.current.offsetHeight
-    const newCursors: Cursor[] = []
+    const updateCursors = () => {
+      const container = containerRef.current
+      if (!container) return
 
-    const rows = 5 // Reduced rows for better mobile display
-    const cursorSpacing = Math.min(24, Math.max(16, width / 20)) // Tighter spacing
-    const topPadding = height * 0.1 // Less top padding
-    const bottomPadding = height * 0.1 // Less bottom padding
+      const width = container.offsetWidth
+      const height = container.offsetHeight
+      const newCursors: Cursor[] = []
 
-    const mountainCenterX = Math.round(width / 2) // Ensure pixel-perfect center
+      const rows = 5 // Reduced rows for better mobile display
+      const cursorSize = Math.min(24, Math.max(16, width / 20)) // Base cursor size on container width
+      const cursorSpacing = cursorSize * 1.2 // Spacing relative to cursor size
+      const topPadding = height * 0.1
+      const bottomPadding = height * 0.1
 
-    // Build the mountain from top to bottom with perfect mathematical progression
-    for (let row = 0; row < rows; row++) {
-      const cursorsInThisRow = 2 * row + 1
-      const rowWidth = cursorsInThisRow * cursorSpacing
-      const startX = Math.round(mountainCenterX - (rowWidth / 2)) // Round for pixel-perfect alignment
-      const baseY = Math.round(topPadding + (row * (height - topPadding - bottomPadding) / (rows - 1)))
+      // Calculate mountain center based on container width
+      const mountainCenterX = Math.round(width / 2)
+      const mountainWidth = Math.min(width * 0.8, 800) // Cap maximum width
+      const baseSpacing = mountainWidth / ((rows * 2) - 1)
 
-      for (let i = 0; i < cursorsInThisRow; i++) {
-        const baseX = Math.round(startX + i * cursorSpacing) // Round for pixel-perfect alignment
-        newCursors.push({
-          x: baseX,
-          y: baseY,
-          baseX,
-          baseY,
-          delay: Math.random() * 0.4, // Faster animation
-          id: `cursor-${row}-${i}`
-        })
+      // Build the mountain from top to bottom
+      for (let row = 0; row < rows; row++) {
+        const cursorsInThisRow = 2 * row + 1
+        const rowWidth = (cursorsInThisRow - 1) * baseSpacing
+        const startX = Math.round(mountainCenterX - (rowWidth / 2))
+        const baseY = Math.round(topPadding + (row * (height - topPadding - bottomPadding) / (rows - 1)))
+
+        for (let i = 0; i < cursorsInThisRow; i++) {
+          const baseX = Math.round(startX + (i * baseSpacing))
+          newCursors.push({
+            x: baseX,
+            y: baseY,
+            baseX,
+            baseY,
+            delay: Math.random() * 0.4,
+            id: `cursor-${row}-${i}`
+          })
+        }
       }
+
+      setCursors(newCursors)
     }
 
-    setCursors(newCursors)
-    setTimeout(() => setIsLoaded(true), 100)
+    // Initial setup
+    updateCursors()
+    setIsLoaded(true)
+
+    // Add resize handler
+    const handleResize = () => {
+      requestAnimationFrame(updateCursors)
+    }
+
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
   }, [])
 
   // Update cursor positions based on mouse
@@ -116,11 +136,10 @@ export function CursorMountain() {
       const dy = mousePos.y - cursor.baseY
       const distance = Math.sqrt(dx * dx + dy * dy)
       const maxDistance = 150
-      const repulsionStrength = 20 // Reduced for more subtle movement
+      const repulsionStrength = 20
 
       if (distance < maxDistance && distance > 0) {
         const factor = (1 - distance / maxDistance) * repulsionStrength
-        // Add slight easing to the movement
         const easing = (1 - distance / maxDistance) ** 2
         return {
           ...cursor,
@@ -140,9 +159,9 @@ export function CursorMountain() {
   return (
     <div 
       ref={containerRef} 
-      className="absolute inset-0 overflow-hidden flex items-center justify-center will-change-transform"
+      className="-ml-10 absolute inset-0 overflow-hidden flex items-center justify-center will-change-transform"
     >
-      <div className="relative w-full h-full will-change-transform flex items-center justify-center">
+      <div className="relative w-full h-full max-w-[800px] mx-auto will-change-transform">
         {cursors.map((cursor) => (
           <div
             key={cursor.id}
