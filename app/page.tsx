@@ -1,19 +1,83 @@
+"use client"
+
 import Image from "next/image";
 import { CursorMountain } from "./components/cursor-mountain";
 import { ClaimHandleForm } from "./components/claim-handle-form";
-import { NoiseBackground } from "./components/noise-background";
+import { MouseSpeechBubble } from "./components/mouse-speech-bubble";
+import { FloatingSuccess } from "./components/floating-success";
+import { useState, useEffect, useRef, useCallback } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import Link from "next/link";
 
 export default function Home() {
+  const [showCompletion, setShowCompletion] = useState(false);
+  const [handle, setHandle] = useState("");
+  const [showInitialText, setShowInitialText] = useState(true);
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [position, setPosition] = useState(0);
+  const mousePosRef = useRef({ x: 0, y: 0 });
+  const rafRef = useRef<number>();
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      mousePosRef.current = { x: e.clientX, y: e.clientY };
+      
+      if (!rafRef.current) {
+        rafRef.current = requestAnimationFrame(() => {
+          setMousePosition(mousePosRef.current);
+          rafRef.current = undefined;
+        });
+      }
+    };
+
+    window.addEventListener('mousemove', handleMouseMove, { passive: true });
+    return () => {
+      if (rafRef.current) {
+        cancelAnimationFrame(rafRef.current);
+      }
+      window.removeEventListener('mousemove', handleMouseMove);
+    };
+  }, []);
+
+  const handleFormStateChange = useCallback((state: { showExtendedForm: boolean }) => {
+    setShowInitialText(!state.showExtendedForm);
+    if (state.showExtendedForm) {
+      setShowSuccess(true);
+      setTimeout(() => setShowSuccess(false), 1000);
+    }
+  }, []);
+
+  const handleFormComplete = useCallback((submittedHandle: string, submissionPosition: number) => {
+    setShowSuccess(true);
+    setHandle(submittedHandle);
+    setPosition(submissionPosition);
+    setTimeout(() => {
+      setShowSuccess(false);
+      setShowCompletion(true);
+    }, 1000);
+  }, []);
+
   return (
-    <div className="min-h-screen bg-[#faf9f6] selection:bg-black selection:text-white overflow-hidden">
-      <NoiseBackground />
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 py-12 sm:py-24 lg:px-8">
+    <div className="min-h-screen bg-gradient-to-br from-[#faf9f6] via-[#fff5e6] to-[#faf9f6] selection:bg-black selection:text-white overflow-hidden will-change-transform">
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_120%,rgba(255,236,194,0.1),rgba(255,255,255,0)_50%)] will-change-transform" />
+      <AnimatePresence>
+        {showSuccess && <FloatingSuccess />}
+      </AnimatePresence>
+      {showCompletion && <MouseSpeechBubble handle={handle} position={position} initialPosition={mousePosition} />}
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 py-12 sm:py-24 lg:px-8 relative z-10">
         {/* Header */}
-        <header className="max-w-2xl mx-auto text-center">
-          <h1 className="text-4xl font-bold tracking-tight sm:text-6xl [text-wrap:balance] text-black [font-family:var(--font-proto-mono-semibold-shadow)]">
-            Pointer
-          </h1>
-          <p className="mt-4 sm:mt-6 text-base sm:text-lg text-neutral-600 mx-auto leading-relaxed [font-family:var(--font-proto-mono-light)]">
+        <header className="max-w-2xl mx-auto text-center relative will-change-transform">
+          <Link 
+            href="/" 
+            className="inline-block hover:opacity-80 transition-opacity"
+          >
+            <span className="sr-only">Go to Pointer home page</span>
+            <h1 className="text-4xl font-bold tracking-tight sm:text-6xl [text-wrap:balance] text-black fill-white [font-family:var(--font-proto-mono-semibold-shadow)] [text-shadow:0_0_1px_rgba(255,255,255,0.5)] will-change-transform">
+              Pointer
+            </h1>
+          </Link>
+          <p className="mt-4 sm:mt-6 text-base sm:text-lg text-black mx-auto leading-relaxed [font-family:var(--font-proto-mono-light)]">
             The Generalist Browser Agent for Everyone
           </p>
         </header>
@@ -22,29 +86,28 @@ export default function Home() {
         <main className="mt-12 sm:mt-24">
           <div className="relative mx-auto flex max-w-3xl flex-col items-center">
             {/* Claim Handle Form */}
-            <p className="text-sm sm:text-base text-neutral-500 mb-4 sm:mb-6 text-center [font-family:var(--font-proto-mono-light)]">
-              Claim your personal operator
-            </p>
+            <AnimatePresence>
+              {showInitialText && (
+                <motion.p 
+                  initial={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  className="text-sm sm:text-base text-neutral-500 mb-4 sm:mb-6 text-center [font-family:var(--font-proto-mono-light)] will-change-transform"
+                >
+                  Claim your personal operator
+                </motion.p>
+              )}
+            </AnimatePresence>
             <div className="w-full max-w-md z-10 relative mb-12 sm:mb-24">
-              <ClaimHandleForm />
+              <ClaimHandleForm 
+                onComplete={handleFormComplete}
+                onStateChange={handleFormStateChange}
+              />
             </div>
 
-            {/* Container for Cursor Mountain and Static Image */}
-            <div className="relative w-full aspect-[4/3] sm:aspect-[16/9]">
-              {/* Interactive Cursor Mountain (Desktop) */}
+            {/* Container for Cursor Mountain */}
+            <div className="relative w-full aspect-[4/3] sm:aspect-[16/9] will-change-transform">
               <div className="absolute inset-0 transition-opacity duration-500 z-0">
                 <CursorMountain />
-              </div>
-
-              {/* Static Image (Mobile) */}
-              <div className="absolute inset-0 md:hidden">
-                <Image
-                  src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-BWA6Xjdzzt6yDOVmhnU6fsj4LRDj9y.png"
-                  alt="Multiple cursor icons forming a mountain shape"
-                  fill
-                  className="object-contain"
-                  priority
-                />
               </div>
             </div>
 
@@ -53,7 +116,7 @@ export default function Home() {
               {/* Research Badge */}
               <div className="flex items-center justify-center gap-2 px-4 py-2 bg-neutral-50 rounded-full">
                 <span className="text-xs sm:text-sm [font-family:var(--font-proto-mono-light)] text-neutral-600">
-                  Designed from HCI * AI research
+                  Designed with HCI * AI research
                 </span>
               </div>
 
