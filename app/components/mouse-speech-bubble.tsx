@@ -34,6 +34,18 @@ export function MouseSpeechBubble({
   const charIndexRef = useRef(0)
   const currentTextRef = useRef("")
   const rafRef = useRef<number>()
+  const [isMobile, setIsMobile] = useState(false)
+
+  // Check screen size on mount and resize
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 640) // 640px is the sm breakpoint in Tailwind
+    }
+
+    checkMobile()
+    window.addEventListener('resize', checkMobile)
+    return () => window.removeEventListener('resize', checkMobile)
+  }, [])
 
   // Optimize mouse tracking with RAF
   useEffect(() => {
@@ -52,29 +64,18 @@ export function MouseSpeechBubble({
       }
     }
 
-    const handleScroll = () => {
-      if (!rafRef.current) {
-        rafRef.current = requestAnimationFrame(() => {
-          setMousePosition({ 
-            x: lastKnownPosition.current.x + window.scrollX,
-            y: lastKnownPosition.current.y + window.scrollY
-          })
-          rafRef.current = undefined
-        })
-      }
+    // Only track mouse movement on non-mobile devices
+    if (!isMobile) {
+      document.addEventListener('mousemove', handleMouseMove as EventListener, { passive: true })
     }
-
-    document.addEventListener('mousemove', handleMouseMove as EventListener, { passive: true })
-    window.addEventListener('scroll', handleScroll, { passive: true })
     
     return () => {
       if (rafRef.current) {
         cancelAnimationFrame(rafRef.current)
       }
       document.removeEventListener('mousemove', handleMouseMove as EventListener)
-      window.removeEventListener('scroll', handleScroll)
     }
-  }, [])
+  }, [isMobile])
 
   // Separate Twitter button effect
   useEffect(() => {
@@ -218,12 +219,18 @@ export function MouseSpeechBubble({
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.9 }}
           style={{
-            position: 'absolute',
-            left: mousePosition.x + 24,
-            top: mousePosition.y - 24,
+            position: 'fixed',
+            ...(isMobile ? {
+              left: '50%',
+              top: '20%',
+              transform: 'translateX(-50%)',
+            } : {
+              left: mousePosition.x + 24,
+              top: mousePosition.y - 24,
+              transform: 'translate3d(0,0,0)',
+            }),
             pointerEvents: 'none',
             zIndex: 50,
-            transform: 'translate3d(0,0,0)',
             backfaceVisibility: 'hidden',
             perspective: 1000,
             willChange: 'transform'
@@ -234,7 +241,7 @@ export function MouseSpeechBubble({
             className="relative will-change-transform" 
             {...getAnimation()}
           >
-            <div className="
+            <div className={`
               bg-gradient-to-b from-white to-neutral-50 
               text-neutral-800 
               px-5 py-3 
@@ -247,16 +254,11 @@ export function MouseSpeechBubble({
               backdrop-blur-[2px]
               relative
               will-change-transform
-            ">
+              ${isMobile ? 'text-center' : ''}
+            `}>
               {displayedText}
               {isTyping && (
-                <motion.span
-                  animate={{ opacity: [1, 0] }}
-                  transition={{ duration: 0.4, repeat: Number.POSITIVE_INFINITY }}
-                  className="ml-1 inline-block text-neutral-400 will-change-opacity"
-                >
-                  ▌
-                </motion.span>
+                <span className="inline-block w-1 h-4 ml-0.5 align-middle bg-black animate-blink" />
               )}
             </div>
           </motion.div>
