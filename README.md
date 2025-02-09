@@ -1,4 +1,38 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Pointer Mountain
+
+This is the open source version of the signup page for [trypointer.com](https://trypointer.com). The project is 100% AI-generated code, created by sourcetms.
+
+## Features
+- Modern, minimal design
+- Built with Next.js, React, and Tailwind CSS
+- Framer Motion animations
+- Proto Mono font family
+- Shadcn UI components
+
+## Tech Stack
+- Next.js 14
+- React
+- Tailwind CSS
+- Framer Motion
+- Shadcn UI
+
+## Font
+The project uses Proto Mono font family for its unique, modern aesthetic.
+
+## Development
+```bash
+cd app
+npm install
+npm run dev
+```
+
+## Build
+```bash
+cd app
+npm run build
+```
+
+Created by sourcetms. GLHF! 🎮✨
 
 ## Getting Started
 
