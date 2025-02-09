@@ -221,9 +221,11 @@ export function MouseSpeechBubble({
           style={{
             position: 'fixed',
             ...(isMobile ? {
-              left: '50%',
+              left: '10%',
+              right: '10%',
               top: '20%',
-              transform: 'translateX(-50%)',
+              transform: 'none',
+              width: '80%',
             } : {
               left: mousePosition.x + 24,
               top: mousePosition.y - 24,
@@ -248,13 +250,12 @@ export function MouseSpeechBubble({
               rounded-2xl 
               text-sm 
               [font-family:var(--font-proto-mono-regular)] 
-              whitespace-nowrap 
               shadow-[2px_2px_0_0_rgba(0,0,0,1),0_4px_20px_-2px_rgba(0,0,0,0.1),0_2px_4px_-1px_rgba(0,0,0,0.06)]
               border border-white/40
               backdrop-blur-[2px]
               relative
               will-change-transform
-              ${isMobile ? 'text-center' : ''}
+              ${isMobile ? 'text-center whitespace-normal break-words' : 'whitespace-nowrap'}
             `}>
               {displayedText}
               {isTyping && (
