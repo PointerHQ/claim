@@ -69,35 +69,34 @@ export function CursorMountain() {
     const height = containerRef.current.offsetHeight
     const newCursors: Cursor[] = []
 
-    const rows = 8
-    const cursorSpacing = 32
-    const topPadding = 80
-    const bottomPadding = 40
+    const rows = 5 // Reduced rows for better mobile display
+    const cursorSpacing = Math.min(24, Math.max(16, width / 20)) // Tighter spacing
+    const topPadding = height * 0.1 // Less top padding
+    const bottomPadding = height * 0.1 // Less bottom padding
 
-    const mountainCenterX = width / 2
+    const mountainCenterX = Math.round(width / 2) // Ensure pixel-perfect center
 
     // Build the mountain from top to bottom with perfect mathematical progression
     for (let row = 0; row < rows; row++) {
       const cursorsInThisRow = 2 * row + 1
       const rowWidth = cursorsInThisRow * cursorSpacing
-      const startX = mountainCenterX - (rowWidth / 2)
-      const baseY = topPadding + (row * (height - topPadding - bottomPadding) / (rows - 1))
+      const startX = Math.round(mountainCenterX - (rowWidth / 2)) // Round for pixel-perfect alignment
+      const baseY = Math.round(topPadding + (row * (height - topPadding - bottomPadding) / (rows - 1)))
 
       for (let i = 0; i < cursorsInThisRow; i++) {
-        const baseX = startX + i * cursorSpacing
+        const baseX = Math.round(startX + i * cursorSpacing) // Round for pixel-perfect alignment
         newCursors.push({
           x: baseX,
           y: baseY,
           baseX,
           baseY,
-          delay: Math.random() * 0.8, // Reduced delay range for more cohesive animation
+          delay: Math.random() * 0.4, // Faster animation
           id: `cursor-${row}-${i}`
         })
       }
     }
 
     setCursors(newCursors)
-    // Trigger load animation after a brief delay
     setTimeout(() => setIsLoaded(true), 100)
   }, [])
 
@@ -117,12 +116,12 @@ export function CursorMountain() {
       const dy = mousePos.y - cursor.baseY
       const distance = Math.sqrt(dx * dx + dy * dy)
       const maxDistance = 150
-      const repulsionStrength = 25 // Slightly reduced for subtler movement
+      const repulsionStrength = 20 // Reduced for more subtle movement
 
       if (distance < maxDistance && distance > 0) {
         const factor = (1 - distance / maxDistance) * repulsionStrength
         // Add slight easing to the movement
-        const easing = Math.pow(1 - distance / maxDistance, 2)
+        const easing = (1 - distance / maxDistance) ** 2
         return {
           ...cursor,
           x: cursor.baseX - (dx / distance) * factor * easing,
@@ -141,9 +140,9 @@ export function CursorMountain() {
   return (
     <div 
       ref={containerRef} 
-      className="absolute inset-0 md:block overflow-hidden flex items-center justify-center will-change-transform"
+      className="absolute inset-0 overflow-hidden flex items-center justify-center will-change-transform"
     >
-      <div className="relative w-full h-full will-change-transform">
+      <div className="relative w-full h-full will-change-transform flex items-center justify-center">
         {cursors.map((cursor) => (
           <div
             key={cursor.id}

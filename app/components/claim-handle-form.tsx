@@ -337,31 +337,31 @@ export function ClaimHandleForm({
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        className="w-full max-w-md mx-auto min-h-[60vh] flex flex-col justify-center relative -mt-24"
+        className="w-full max-w-md mx-auto flex flex-col justify-start relative mt-[5vh] sm:mt-[8vh]"
       >
         {/* Status text that fades out */}
         <motion.p 
           initial={{ opacity: 1, y: 0 }}
           animate={{ opacity: 0, y: -20 }}
           transition={{ duration: 1.2, ease: "easeOut" }}
-          className="text-sm sm:text-base text-neutral-500 mb-4 sm:mb-6 text-center [font-family:var(--font-proto-mono-light)]"
+          className="text-sm sm:text-base text-neutral-500 mb-3 sm:mb-4 text-center [font-family:var(--font-proto-mono-light)]"
         >
           Personal operator claimed
         </motion.p>
 
-        <div className="space-y-8">
+        <div className="space-y-4 sm:space-y-6">
           {/* Content with Staggered Animation */}
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
-            className="space-y-6 text-center"
+            className="space-y-3 sm:space-y-4 text-center"
           >
             <motion.h3 
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4 }}
-              className="text-2xl font-bold [font-family:var(--font-proto-mono-regular)]"
+              className="text-xl sm:text-2xl font-bold [font-family:var(--font-proto-mono-regular)]"
             >
               Thank you, {handle}!
             </motion.h3>
@@ -369,12 +369,12 @@ export function ClaimHandleForm({
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.5 }}
-              className="space-y-4"
+              className="space-y-2 sm:space-y-3"
             >
-              <p className="text-neutral-600 [font-family:var(--font-proto-mono-light)] leading-relaxed">
+              <p className="text-sm sm:text-base text-neutral-600 [font-family:var(--font-proto-mono-light)] leading-relaxed">
                 Your operator handle has been reserved.
               </p>
-              <p className="text-neutral-600 [font-family:var(--font-proto-mono-light)] leading-relaxed">
+              <p className="text-sm sm:text-base text-neutral-600 [font-family:var(--font-proto-mono-light)] leading-relaxed px-4">
                 Want to secure a welcome gift? Share about Pointer on Twitter and we'll make sure you're included!
               </p>
             </motion.div>
@@ -385,18 +385,18 @@ export function ClaimHandleForm({
             initial={{ scale: 0.8, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ delay: 0.6, type: "spring" }}
-            className="flex justify-center"
+            className="flex justify-center px-4"
           >
             <a
               href={`https://twitter.com/intent/tweet?text=${getTweetText()}`}
               target="_blank"
               rel="noopener noreferrer"
               onClick={() => playSound('click')}
-              className="inline-flex items-center gap-2.5 px-6 py-3 bg-[#1DA1F2] text-white rounded-full hover:bg-[#1a8cd8] transition-colors [font-family:var(--font-proto-mono-regular)] hover:scale-105 transform duration-200"
+              className="inline-flex items-center gap-2 px-4 sm:px-6 py-2.5 sm:py-3 bg-[#1DA1F2] text-white rounded-full hover:bg-[#1a8cd8] transition-colors [font-family:var(--font-proto-mono-regular)] hover:scale-105 transform duration-200 text-sm sm:text-base"
             >
               <svg 
                 viewBox="0 0 24 24" 
-                className="w-5 h-5"
+                className="w-4 h-4 sm:w-5 sm:h-5"
                 fill="currentColor"
                 aria-hidden="true"
                 role="presentation"
@@ -412,10 +412,10 @@ export function ClaimHandleForm({
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.7 }}
-            className="flex justify-center"
+            className="flex justify-center px-4"
           >
-            <div className="px-6 py-4 bg-neutral-50 rounded-2xl text-center">
-              <p className="text-sm text-neutral-600 [font-family:var(--font-proto-mono-light)]">
+            <div className="px-4 sm:px-6 py-3 sm:py-4 bg-neutral-50 rounded-2xl text-center w-full">
+              <p className="text-xs sm:text-sm text-neutral-600 [font-family:var(--font-proto-mono-light)]">
                 We'll email you at {email} upon roll out.
               </p>
             </div>
@@ -451,7 +451,7 @@ export function ClaimHandleForm({
               placeholder="Claim your name (min. 3 char)"
               value={handle}
               onChange={(e) => setHandle(e.target.value)}
-              className={`h-20 w-full pl-10 pr-48 text-3xl tracking-wide font-bold bg-white border-2 rounded-full transition-all duration-300 placeholder:text-neutral-400 placeholder:font-normal placeholder:tracking-normal hover:border-neutral-300 focus:border-black focus:ring-0 animate-border-pulse focus:animate-none [font-family:var(--font-proto-mono-regular)] transform-gpu ${showSuccess ? 'border-emerald-500 animate-none' : 'border-neutral-200'}`}
+              className={`h-12 sm:h-14 md:h-16 w-full pl-4 sm:pl-6 md:pl-8 pr-20 sm:pr-28 md:pr-36 text-base sm:text-xl md:text-2xl tracking-wide font-bold bg-white border-2 rounded-full transition-all duration-300 placeholder:text-neutral-400 placeholder:font-normal placeholder:tracking-normal hover:border-neutral-300 focus:border-black focus:ring-0 animate-border-pulse focus:animate-none [font-family:var(--font-proto-mono-regular)] transform-gpu ${showSuccess ? 'border-emerald-500 animate-none' : 'border-neutral-200'} placeholder:text-sm sm:placeholder:text-base md:placeholder:text-lg`}
               minLength={3}
               autoFocus
               autoComplete="off"
@@ -461,19 +461,19 @@ export function ClaimHandleForm({
               {isSubmitting && <LoadingSpinner />}
             </AnimatePresence>
             <div className="absolute inset-y-0 right-0 flex items-center">
-              <div className="h-10 w-[1px] bg-neutral-200 mr-4" />
+              <div className="h-4 sm:h-6 md:h-8 w-[1px] bg-neutral-200 mr-1 sm:mr-2 md:mr-4" />
               <Button 
                 type="submit" 
-                className={`mr-6 px-5 rounded-full transition-all duration-300 text-lg group-hover:translate-x-1 disabled:opacity-50 flex items-center gap-2 [font-family:var(--font-proto-mono-regular)] transform-gpu ${showSuccess ? 'bg-emerald-500 hover:bg-emerald-600 text-white' : 'bg-transparent hover:bg-transparent text-neutral-600 hover:text-black'}`}
+                className={`mr-1 sm:mr-3 md:mr-4 px-2 sm:px-3 md:px-4 rounded-full transition-all duration-300 text-sm sm:text-base md:text-lg group-hover:translate-x-1 disabled:opacity-50 flex items-center gap-1 sm:gap-2 [font-family:var(--font-proto-mono-regular)] transform-gpu ${showSuccess ? 'bg-emerald-500 hover:bg-emerald-600 text-white' : 'bg-transparent hover:bg-transparent text-neutral-600 hover:text-black'}`}
                 variant="ghost"
                 disabled={!isValid || isSubmitting}
               >
                 <span className="relative transition-colors">
                   {showSuccess ? (
-                    <span className="flex items-center gap-2">
+                    <span className="flex items-center gap-1 sm:gap-1.5 md:gap-2">
                       <svg 
                         viewBox="0 0 15 15" 
-                        className="w-5 h-5"
+                        className="w-3.5 h-3.5 sm:w-4 sm:h-4 md:w-5 md:h-5"
                         fill="none"
                         aria-hidden="true"
                       >
@@ -492,11 +492,11 @@ export function ClaimHandleForm({
                 </span>
                 {!showSuccess && (
                   <svg 
-                    width="18" 
-                    height="18" 
+                    width="16" 
+                    height="16"
                     viewBox="0 0 15 15" 
                     fill="none" 
-                    className="relative transition-transform duration-200 group-hover:translate-x-0.5 transform-gpu"
+                    className="relative transition-transform duration-200 group-hover:translate-x-0.5 transform-gpu hidden sm:block"
                     aria-hidden="true"
                   >
                     <path 
@@ -517,13 +517,13 @@ export function ClaimHandleForm({
             animate={{ opacity: 1, y: 0 }}
             className="space-y-4"
           >
-            <div className="flex justify-center mb-8">
-              <div className="flex items-center gap-2.5 px-6 py-3 bg-white rounded-2xl border border-neutral-200 shadow-[0_0_0_1px_rgba(0,0,0,0.05)]">
+            <div className="flex justify-center mb-3 sm:mb-8">
+              <div className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-6 py-2 sm:py-3 bg-white rounded-2xl border border-neutral-200 shadow-[0_0_0_1px_rgba(0,0,0,0.05)]">
                 <svg 
                   width="15" 
                   height="15" 
                   viewBox="0 0 15 15" 
-                  className="w-4 h-4 text-neutral-600"
+                  className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-neutral-600"
                   fill="none"
                   aria-hidden="true"
                   role="presentation"
@@ -535,7 +535,7 @@ export function ClaimHandleForm({
                     clipRule="evenodd"
                   />
                 </svg>
-                <p className="text-lg font-medium text-neutral-900 [font-family:var(--font-proto-mono-regular)]">
+                <p className="text-base sm:text-lg font-medium text-neutral-900 [font-family:var(--font-proto-mono-regular)]">
                   {handle}
                 </p>
               </div>
@@ -546,7 +546,7 @@ export function ClaimHandleForm({
                 placeholder="Full Name"
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
-                className="h-14 w-full pl-6 text-lg bg-white border-2 border-neutral-200 rounded-full transition-colors duration-200 placeholder:text-neutral-400 hover:border-neutral-300 focus:border-black focus:ring-0 [font-family:var(--font-proto-mono-regular)] transform-gpu"
+                className="h-11 sm:h-12 md:h-14 w-full pl-3 sm:pl-6 text-base sm:text-base md:text-lg bg-white border-2 border-neutral-200 rounded-full transition-colors duration-200 placeholder:text-neutral-400 hover:border-neutral-300 focus:border-black focus:ring-0 [font-family:var(--font-proto-mono-regular)] transform-gpu"
                 autoComplete="name"
                 onKeyDown={handleKeyDown}
                 autoFocus
@@ -558,13 +558,13 @@ export function ClaimHandleForm({
                 placeholder="Email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="h-14 w-full pl-6 pr-32 text-lg bg-white border-2 border-neutral-200 rounded-full transition-colors duration-200 placeholder:text-neutral-400 hover:border-neutral-300 focus:border-black focus:ring-0 [font-family:var(--font-proto-mono-regular)] transform-gpu"
+                className="h-11 sm:h-12 md:h-14 w-full pl-3 sm:pl-6 pr-24 sm:pr-32 md:pr-40 text-base sm:text-base md:text-lg bg-white border-2 border-neutral-200 rounded-full transition-colors duration-200 placeholder:text-neutral-400 hover:border-neutral-300 focus:border-black focus:ring-0 [font-family:var(--font-proto-mono-regular)] transform-gpu"
                 autoComplete="email"
                 onKeyDown={handleKeyDown}
               />
               <AnimatePresence>
                 {isSubmitting && (
-                  <motion.div className="absolute right-32 top-1/2 -translate-y-1/2">
+                  <motion.div className="absolute right-24 sm:right-32 top-1/2 -translate-y-1/2">
                     <LoadingSpinner />
                   </motion.div>
                 )}
@@ -572,18 +572,18 @@ export function ClaimHandleForm({
               <div className="absolute inset-y-0 right-0 flex items-center">
                 <Button 
                   type="submit" 
-                  className="mr-3 px-5 transition-all duration-300 text-lg disabled:opacity-50 flex items-center gap-2 [font-family:var(--font-proto-mono-regular)] transform-gpu rounded-full bg-black hover:bg-neutral-800 text-white"
+                  className="mr-2 sm:mr-3 px-3 sm:px-5 transition-all duration-300 text-base sm:text-lg disabled:opacity-50 flex items-center gap-1.5 sm:gap-2 [font-family:var(--font-proto-mono-regular)] transform-gpu rounded-full bg-black hover:bg-neutral-800 text-white"
                   disabled={!isExtendedFormValid || isSubmitting}
                 >
-                  <span className="relative">
+                  <span className="relative whitespace-nowrap">
                     {isSubmitting ? 'Submitting...' : 'Complete'}
                   </span>
                   <svg 
-                    width="18" 
-                    height="18" 
+                    width="16" 
+                    height="16" 
                     viewBox="0 0 15 15" 
                     fill="none" 
-                    className="relative transition-transform duration-200 group-hover:translate-x-0.5 transform-gpu"
+                    className="relative transition-transform duration-200 group-hover:translate-x-0.5 transform-gpu hidden sm:block"
                     aria-hidden="true"
                   >
                     <path 
@@ -605,8 +605,8 @@ export function ClaimHandleForm({
           {error}
         </p>
       )}
-      <p className="mt-2 text-xs text-neutral-500 text-right font-medium [font-family:var(--font-proto-mono-light)]">
-        Only {spotsLeft} spots available
+      <p className="mt-2 text-xs sm:text-sm text-neutral-500 text-right font-medium [font-family:var(--font-proto-mono-light)]">
+        Only {spotsLeft} spots left
       </p>
     </form>
   )

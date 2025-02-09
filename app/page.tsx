@@ -61,7 +61,13 @@ export default function Home() {
   return (
     <div className="min-h-screen relative overflow-hidden will-change-transform">
       {/* Base gradient */}
-      <div className="absolute inset-0 bg-gradient-to-br from-[#fcfcfc] via-[#fafafa] to-[#f8f8f8] opacity-90" />
+      <div className="absolute inset-0 bg-gradient-to-br from-[#fcfcfc] via-[#fafafa] to-[#f7f7f7] opacity-90" />
+      
+      {/* Accent gradient */}
+      <div className="absolute inset-0">
+        <div className="absolute top-[-20%] right-[-20%] w-[70%] h-[70%] bg-[radial-gradient(circle_at_center,rgba(124,58,237,0.03),transparent_70%)] blur-2xl" />
+        <div className="absolute bottom-[-20%] left-[-20%] w-[70%] h-[70%] bg-[radial-gradient(circle_at_center,rgba(59,130,246,0.03),transparent_70%)] blur-2xl" />
+      </div>
       
       {/* Noise texture */}
       <div className="absolute inset-0 opacity-[0.15]" 
@@ -84,78 +90,82 @@ export default function Home() {
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_80%,rgba(250,249,246,0.08),transparent_50%)] mix-blend-overlay" />
       
       {showCompletion && <MouseSpeechBubble handle={handle} position={position} initialPosition={mousePosition} />}
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 py-8 sm:py-12 md:py-24 lg:px-8 relative z-10">
+      <div className="mx-auto max-w-7xl px-6 sm:px-8 lg:px-12 relative z-10 min-h-[100dvh] flex flex-col">
         {/* Header */}
-        <header className="max-w-2xl mx-auto text-center relative will-change-transform">
+        <header className="max-w-4xl mx-auto text-center relative will-change-transform pt-16 sm:pt-[15vh] lg:pt-[18vh]">
           <Link 
             href="/" 
             className="inline-block hover:opacity-80 transition-opacity"
           >
             <span className="sr-only">Go to Pointer home page</span>
-            <h1 className="text-3xl sm:text-4xl md:text-6xl font-bold tracking-tight [text-wrap:balance] text-black fill-white [font-family:var(--font-proto-mono-semibold-shadow)] [text-shadow:0_0_1px_rgba(255,255,255,0.5)] will-change-transform">
+            <h1 className="text-[2.75rem] leading-[1.1] sm:text-6xl lg:text-7xl font-bold tracking-tight [text-wrap:balance] text-black fill-white [font-family:var(--font-proto-mono-semibold-shadow)] [text-shadow:0_0_1px_rgba(255,255,255,0.5)] will-change-transform px-3 sm:px-4">
               Pointer
             </h1>
           </Link>
-          <p className="mt-3 sm:mt-4 md:mt-6 text-sm sm:text-base md:text-lg text-black mx-auto leading-relaxed [font-family:var(--font-proto-mono-light)]">
-            The Generalist Browser Agent for Everyone
+          <p className="mt-4 sm:mt-6 lg:mt-8 text-lg sm:text-2xl lg:text-3xl text-neutral-800 mx-auto leading-[1.3] [font-family:var(--font-proto-mono-light)] max-w-[85%] sm:max-w-[80%] lg:max-w-[75%]">
+            The Generalist Browser Agent<br className="block sm:hidden" /> for Everyone
           </p>
         </header>
 
         {/* Main Content */}
-        <main className="mt-8 sm:mt-12 md:mt-24">
-          <div className="relative mx-auto flex max-w-3xl flex-col items-center">
+        <main className="flex-grow flex flex-col mt-12 sm:mt-[8vh] lg:mt-[10vh]">
+          <div className="relative mx-auto flex max-w-3xl flex-col items-center w-full min-h-[calc(100dvh-20rem)] sm:min-h-[calc(100vh-28rem)] lg:min-h-[calc(100vh-36rem)] justify-between">
             {/* Claim Handle Form */}
-            <AnimatePresence>
-              {showInitialText && (
-                <motion.p 
-                  initial={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  className="text-xs sm:text-sm md:text-base text-neutral-500 mb-3 sm:mb-4 md:mb-6 text-center [font-family:var(--font-proto-mono-light)] will-change-transform"
-                >
-                  Claim your personal operator
-                </motion.p>
-              )}
-            </AnimatePresence>
-            <div className="w-full max-w-md z-10 relative mb-8 sm:mb-12 md:mb-24">
-              <ClaimHandleForm 
-                onComplete={handleFormComplete}
-                onStateChange={handleFormStateChange}
-              />
+            <div className="w-full flex flex-col items-center mt-0">
+              <AnimatePresence>
+                {showInitialText && (
+                  <motion.p 
+                    initial={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -20 }}
+                    className="text-base sm:text-lg lg:text-xl text-neutral-600 mb-6 sm:mb-8 lg:mb-10 text-center [font-family:var(--font-proto-mono-light)] will-change-transform px-3 sm:px-4"
+                  >
+                    Claim your personal operator
+                  </motion.p>
+                )}
+              </AnimatePresence>
+              <div className="w-full max-w-md z-10 relative mb-8 sm:mb-12 lg:mb-16 px-3 sm:px-0">
+                <ClaimHandleForm 
+                  onComplete={handleFormComplete}
+                  onStateChange={handleFormStateChange}
+                />
+              </div>
             </div>
 
             {/* Container for Cursor Mountain */}
-            <div className="relative w-full aspect-[4/3] sm:aspect-[16/9] will-change-transform">
-              <div className="absolute inset-0 transition-opacity duration-500 z-0">
-                <CursorMountain />
+            <div className="relative w-full aspect-[2/1] sm:aspect-[5/2] lg:aspect-[3/1] will-change-transform mt-auto overflow-hidden">
+              <div className="absolute inset-0 transition-opacity duration-500 flex items-end justify-center">
+                <div className="w-full max-w-3xl mx-auto h-full relative translate-y-[15%] sm:translate-y-[20%] lg:translate-y-[25%]">
+                  <CursorMountain />
+                </div>
               </div>
             </div>
 
             {/* Footer Section */}
-            <footer className="w-full mt-8 sm:mt-16 md:mt-24 flex flex-col items-center space-y-6 sm:space-y-8 md:space-y-12 px-4">
+            <footer className="w-full mt-2 sm:mt-4 lg:mt-6 flex flex-col items-center space-y-3 sm:space-y-4 lg:space-y-6 px-3 sm:px-4 pb-4 sm:pb-6 lg:pb-8">
               {/* Research Badge */}
               <motion.div 
-                className="flex items-center justify-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 bg-black rounded-full cursor-default"
+                className="flex items-center justify-center gap-1.5 sm:gap-2 px-3 sm:px-5 py-1.5 sm:py-2.5 bg-black/95 rounded-full cursor-default shadow-[0_2px_8px_rgba(0,0,0,0.08)]"
                 whileHover={{ scale: 1.02, backgroundColor: "rgba(0, 0, 0, 0.9)" }}
                 transition={{ type: "spring", stiffness: 400, damping: 17 }}
               >
-                <span className="text-[10px] sm:text-xs md:text-sm [font-family:var(--font-proto-mono-light)] text-white">
+                <span className="text-[11px] sm:text-sm md:text-base [font-family:var(--font-proto-mono-light)] text-white whitespace-nowrap">
                   Designed with HCI * AI research
                 </span>
               </motion.div>
 
               {/* Domain and Year */}
-              <div className="text-center space-y-1.5 sm:space-y-2">
+              <div className="text-center space-y-1.5 sm:space-y-2.5">
                 <a
                   href="https://trypointer.com"
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Visit trypointer.com (opens in new tab)"
-                  className="text-base sm:text-lg md:text-xl [font-family:var(--font-proto-mono-semibold-shadow)] text-neutral-900 hover:text-black transition-colors inline-flex items-center gap-1.5 group"
+                  className="text-sm sm:text-lg md:text-xl [font-family:var(--font-proto-mono-semibold-shadow)] text-neutral-900 hover:text-black transition-colors inline-flex items-center gap-1.5 sm:gap-2 group"
                 >
                   trypointer.com
                   <svg 
                     viewBox="0 0 15 15" 
-                    className="w-3 h-3 sm:w-4 sm:h-4 opacity-0 -translate-y-0.5 group-hover:opacity-100 transition-all duration-200"
+                    className="w-2.5 h-2.5 sm:w-4 sm:h-4 opacity-0 -translate-y-0.5 group-hover:opacity-100 transition-all duration-200"
                     fill="none"
                     aria-hidden="true"
                   >
@@ -167,24 +177,24 @@ export default function Home() {
                     />
                   </svg>
                 </a>
-                <p className="text-[10px] sm:text-xs md:text-sm [font-family:var(--font-proto-mono-light)] text-neutral-500">
+                <p className="text-[11px] sm:text-sm md:text-base [font-family:var(--font-proto-mono-light)] text-neutral-500">
                   2025
                 </p>
               </div>
 
               {/* Social Links */}
-              <div className="flex items-center justify-center gap-4">
+              <div className="flex items-center justify-center gap-4 mb-2 sm:mb-0">
                 <a 
                   href="https://x.com/pointerinc" 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="p-2 sm:p-2.5 rounded-full hover:bg-neutral-100 transition-colors group"
+                  className="p-1.5 sm:p-2.5 rounded-full hover:bg-neutral-100 transition-colors group"
                   aria-label="Follow @pointerinc on X (formerly Twitter)"
                 >
                   <svg 
                     viewBox="0 0 24 24" 
                     aria-hidden="true" 
-                    className="h-4 w-4 sm:h-5 sm:w-5 fill-neutral-600 group-hover:fill-neutral-900 transition-colors"
+                    className="h-3.5 w-3.5 sm:h-5 sm:w-5 fill-neutral-600 group-hover:fill-neutral-900 transition-colors"
                   >
                     <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
                   </svg>
