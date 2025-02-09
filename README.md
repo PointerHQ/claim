@@ -2,7 +2,7 @@
 
 Open source signup page for [trypointer.com](https://trypointer.com). 100% AI-generated code.
 
-![Pointer Mountain Screenshot](Pointer.png)
+![Pointer](Pointer.png)
 
 ## Stack
 - Next.js 14
