@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input"
 import { motion, AnimatePresence } from "framer-motion"
 import { useSoundEffects } from "./sound-effects"
 import { config } from "../config"
+import axios from 'axios'
 
 // Debounce utility
 function useDebounce<T>(value: T, delay: number): T {
@@ -87,12 +88,12 @@ function LoadingSpinner() {
 async function checkEmailExists(email: string) {
   try {
     const encodedEmail = encodeURIComponent(email);
-    const url = `https://app.nocodb.com/api/v2/tables/${config.nocodb.tableId}/records/count?where=(Email,eq,${encodedEmail})&viewId=vwmicimphmyd3pfy`;
+    const url = `https://app.nocodb.com/api/v2/tables/${process.env.NEXT_PUBLIC_NOCODB_TABLE_ID}/records/count?where=(Email,eq,${encodedEmail})&viewId=vwmicimphmyd3pfy`;
     
     const data = await cachedApiCall(url, {
       method: 'GET',
       headers: {
-        'xc-token': config.nocodb.apiKey || '',
+        'xc-token': process.env.NEXT_PUBLIC_NOCODB_API_KEY || '',
       }
     });
     return data.count > 0;
@@ -104,12 +105,12 @@ async function checkEmailExists(email: string) {
 
 async function getTotalSubmissions() {
   try {
-    const url = `https://app.nocodb.com/api/v2/tables/${config.nocodb.tableId}/records/count?viewId=vwmicimphmyd3pfy`;
+    const url = `https://app.nocodb.com/api/v2/tables/${process.env.NEXT_PUBLIC_NOCODB_TABLE_ID}/records/count?viewId=vwmicimphmyd3pfy`;
     
     const data = await cachedApiCall(url, {
       method: 'GET',
       headers: {
-        'xc-token': config.nocodb.apiKey || '',
+        'xc-token': process.env.NEXT_PUBLIC_NOCODB_API_KEY || '',
       }
     });
     return data.count;
@@ -136,12 +137,12 @@ export function ClaimHandleForm({
   const checkHandleAvailability = useCallback(async (handle: string) => {
     try {
       const encodedHandle = encodeURIComponent(handle);
-      const url = `https://app.nocodb.com/api/v2/tables/${config.nocodb.tableId}/records/count?where=(Handle,eq,${encodedHandle})&viewId=vwmicimphmyd3pfy`;
+      const url = `https://app.nocodb.com/api/v2/tables/${process.env.NEXT_PUBLIC_NOCODB_TABLE_ID}/records/count?where=(Handle,eq,${encodedHandle})&viewId=vwmicimphmyd3pfy`;
       
       const data = await cachedApiCall(url, {
         method: 'GET',
         headers: {
-          'xc-token': config.nocodb.apiKey || '',
+          'xc-token': process.env.NEXT_PUBLIC_NOCODB_API_KEY || '',
         }
       });
       
@@ -150,7 +151,7 @@ export function ClaimHandleForm({
       console.error('Error checking handle:', error);
       throw new Error('Unable to verify handle availability. Please try again.');
     }
-  }, []); // Empty dependency array since this never changes
+  }, []);
 
   const [handle, setHandle] = useState("")
   const [showSuccess, setShowSuccess] = useState(false)
@@ -171,7 +172,7 @@ export function ClaimHandleForm({
   // Memoize form validation - removed isValidHandle from dependencies
   const isValid = useMemo(() => 
     debouncedHandle.length >= 3 && isValidHandle(debouncedHandle),
-    [debouncedHandle] // Removed isValidHandle from dependencies since it's stable
+    [debouncedHandle, isValidHandle]
   );
 
   const isExtendedFormValid = useMemo(() => 
@@ -189,7 +190,7 @@ export function ClaimHandleForm({
     } catch (error) {
       console.error('Error updating spots:', error);
     }
-  }, [getTotalSubmissions]);
+  }, []);
 
   // Batch state updates
   const handleFormStateChange = useCallback((showExtended: boolean) => {
@@ -223,7 +224,7 @@ export function ClaimHandleForm({
         clearInterval(updateSpotsRef.current);
       }
     };
-  }, [getTotalSubmissions]);
+  }, []);
 
   // Update spots after successful submission
   const updateSpotsAfterSubmission = (currentCount: number) => {
@@ -248,75 +249,113 @@ export function ClaimHandleForm({
       try {
         setIsSubmitting(true)
         const isAvailable = await checkHandleAvailability(handle);
+        
         if (!isAvailable) {
           setError('This handle is already taken');
           setIsSubmitting(false)
           return;
         }
-        
-        playSound('step1')
-        setShowSuccess(true)
-        await new Promise(resolve => setTimeout(resolve, 800))
-        setShowExtendedForm(true)
-        onStateChange?.({ showExtendedForm: true })
-        setShowSuccess(false)
+
+        handleFormStateChange(true);
+        playSound('step1');
+        setShowSuccess(true);
       } catch (error) {
-        console.error('Handle check error:', error);
-        setError('Error checking handle availability');
+        setError('An error occurred. Please try again.');
       } finally {
         setIsSubmitting(false)
       }
-    } else if (showExtendedForm && isExtendedFormValid) {
-      setIsSubmitting(true)
+      return;
+    }
+
+    if (showExtendedForm && isExtendedFormValid) {
       try {
+        setIsSubmitting(true)
+        
+        // Check if email exists
         const emailExists = await checkEmailExists(email);
         if (emailExists) {
-          setError('Only one handle per email allowed');
-          setIsSubmitting(false);
+          setError('This email has already been registered');
+          setIsSubmitting(false)
           return;
         }
 
-        playSound('step2')
-        
-        // Get current count before submitting
+        // Get current position
         const currentCount = await getTotalSubmissions();
-        if (currentCount >= 300) {
-          setError('Sorry, all spots have been taken');
-          setIsSubmitting(false);
-          return;
-        }
+        const position = currentCount + 1;
 
         // Submit to NocoDB
-        const response = await fetch(`https://app.nocodb.com/api/v2/tables/${config.nocodb.tableId}/records?viewId=vwmicimphmyd3pfy`, {
+        const nocodbResponse = await fetch(`https://app.nocodb.com/api/v2/tables/${process.env.NEXT_PUBLIC_NOCODB_TABLE_ID}/records`, {
           method: 'POST',
           headers: {
+            'xc-token': process.env.NEXT_PUBLIC_NOCODB_API_KEY || '',
             'Content-Type': 'application/json',
-            'xc-token': config.nocodb.apiKey || '',
           },
           body: JSON.stringify({
+            Handle: handle,
+            Email: email,
             "Full Name": fullName,
-            "Handle": handle,
-            "Email": email
+            Position: position,
           }),
         });
 
-        if (!response.ok) {
-          const errorText = await response.text();
-          console.error('Submission response:', errorText);
-          throw new Error(`Failed to submit to database: ${response.status}`);
+        if (!nocodbResponse.ok) {
+          throw new Error('Failed to submit to database');
         }
 
-        setShowSuccess(true)
-        await new Promise(resolve => setTimeout(resolve, 800))
-        playSound('completion')
-        setShowCompletion(true)
-        onComplete?.(handle, currentCount + 1)
-        
-        // Update spots remaining using the helper function
+        // Send to Slack webhook
+        try {
+          await fetch('/api/slack', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              text: `🎉 New Handle Claimed!\n*Handle:* ${handle}\n*Name:* ${fullName}\n*Email:* ${email}\n*Position:* ${position}`,
+              blocks: [
+                {
+                  type: 'section',
+                  text: {
+                    type: 'mrkdwn',
+                    text: '🎉 *New Handle Claimed!*'
+                  }
+                },
+                {
+                  type: 'section',
+                  fields: [
+                    {
+                      type: 'mrkdwn',
+                      text: `*Handle:*\n${handle}`
+                    },
+                    {
+                      type: 'mrkdwn',
+                      text: `*Name:*\n${fullName}`
+                    },
+                    {
+                      type: 'mrkdwn',
+                      text: `*Email:*\n${email}`
+                    },
+                    {
+                      type: 'mrkdwn',
+                      text: `*Position:*\n${position}`
+                    }
+                  ]
+                }
+              ]
+            })
+          });
+        } catch (slackError) {
+          console.error('Failed to send Slack notification:', slackError);
+          // Don't throw error here - we still want to proceed if Slack fails
+        }
+
+        // Update UI state
         updateSpotsAfterSubmission(currentCount);
+        setShowCompletion(true);
+        playSound('completion');
+        onComplete?.(handle, position);
       } catch (error) {
-        console.error('Form submission error:', error)
-        setError('Error submitting form. Please try again.')
+        console.error('Submission error:', error);
+        setError('An error occurred while submitting. Please try again.');
       } finally {
         setIsSubmitting(false)
       }

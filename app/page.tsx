@@ -214,8 +214,8 @@ export default function Home() {
               transition={{ duration: 1, delay: 1.3 }}
               className="relative w-full aspect-[2/1] sm:aspect-[5/2] lg:aspect-[3/1] will-change-transform mt-auto overflow-hidden"
             >
-              <div className="absolute inset-0 transition-opacity duration-500 flex items-end justify-center">
-                <div className="w-full max-w-3xl mx-auto h-full relative translate-y-[15%] sm:translate-y-[20%] lg:translate-y-[25%]">
+              <div className="absolute inset-0 transition-opacity duration-500 flex items-center justify-center">
+                <div className="w-full h-full relative">
                   <CursorMountain />
                 </div>
               </div>
