@@ -61,16 +61,30 @@ export default function Home() {
   return (
     <div className="min-h-screen relative overflow-hidden will-change-transform">
       {/* Base gradient */}
-      <div className="absolute inset-0 bg-gradient-to-br from-[#fcfcfc] via-[#fafafa] to-[#f7f7f7] opacity-90" />
+      <motion.div 
+        initial={{ opacity: 0 }} 
+        animate={{ opacity: 0.9 }}
+        transition={{ duration: 1, ease: "easeOut" }}
+        className="absolute inset-0 bg-gradient-to-br from-[#fcfcfc] via-[#fafafa] to-[#f7f7f7]" 
+      />
       
       {/* Accent gradient */}
-      <div className="absolute inset-0">
+      <motion.div 
+        initial={{ opacity: 0 }} 
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1.2, delay: 0.2 }}
+        className="absolute inset-0"
+      >
         <div className="absolute top-[-20%] right-[-20%] w-[70%] h-[70%] bg-[radial-gradient(circle_at_center,rgba(124,58,237,0.03),transparent_70%)] blur-2xl" />
         <div className="absolute bottom-[-20%] left-[-20%] w-[70%] h-[70%] bg-[radial-gradient(circle_at_center,rgba(59,130,246,0.03),transparent_70%)] blur-2xl" />
-      </div>
+      </motion.div>
       
       {/* Noise texture */}
-      <div className="absolute inset-0 opacity-[0.15]" 
+      <motion.div 
+        initial={{ opacity: 0 }} 
+        animate={{ opacity: 0.15 }}
+        transition={{ duration: 1.5, delay: 0.3 }}
+        className="absolute inset-0" 
         style={{ 
           backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
           transform: 'translate3d(0, 0, 0)'
@@ -78,21 +92,50 @@ export default function Home() {
       />
 
       {/* Radial gradients */}
-      <div className="absolute inset-0">
+      <motion.div 
+        initial={{ opacity: 0 }} 
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1.5, delay: 0.4 }}
+        className="absolute inset-0"
+      >
         <div className="absolute -top-[50%] -left-[50%] w-[200%] h-[200%] bg-[radial-gradient(circle_at_50%_50%,rgba(255,255,255,0.8),transparent_50%)] animate-slow-spin" />
-      </div>
-      <div className="absolute inset-0">
+      </motion.div>
+      <motion.div 
+        initial={{ opacity: 0 }} 
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1.5, delay: 0.5 }}
+        className="absolute inset-0"
+      >
         <div className="absolute top-0 left-[20%] w-[60%] h-[100%] bg-[radial-gradient(circle_at_50%_0%,rgba(250,249,246,0.4),transparent_60%)]" />
-      </div>
+      </motion.div>
 
       {/* Mesh gradient overlay */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,rgba(255,245,230,0.1),transparent_50%)] mix-blend-soft-light" />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_80%,rgba(250,249,246,0.08),transparent_50%)] mix-blend-overlay" />
+      <motion.div 
+        initial={{ opacity: 0 }} 
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1.5, delay: 0.6 }}
+        className="absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,rgba(255,245,230,0.1),transparent_50%)] mix-blend-soft-light" 
+      />
+      <motion.div 
+        initial={{ opacity: 0 }} 
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1.5, delay: 0.7 }}
+        className="absolute inset-0 bg-[radial-gradient(circle_at_20%_80%,rgba(250,249,246,0.08),transparent_50%)] mix-blend-overlay" 
+      />
       
       {showCompletion && <MouseSpeechBubble handle={handle} position={position} initialPosition={mousePosition} />}
       <div className="mx-auto max-w-7xl px-6 sm:px-8 lg:px-12 relative z-10 min-h-[100dvh] flex flex-col">
         {/* Header */}
-        <header className="max-w-4xl mx-auto text-center relative will-change-transform pt-16 sm:pt-[15vh] lg:pt-[18vh]">
+        <motion.header 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ 
+            duration: 0.8,
+            delay: 0.3,
+            ease: [0.21, 0.47, 0.32, 0.98]
+          }}
+          className="max-w-4xl mx-auto text-center relative will-change-transform pt-16 sm:pt-[15vh] lg:pt-[18vh]"
+        >
           <Link 
             href="/" 
             className="inline-block hover:opacity-80 transition-opacity"
@@ -102,46 +145,93 @@ export default function Home() {
               Pointer
             </h1>
           </Link>
-          <p className="mt-4 sm:mt-6 lg:mt-8 text-lg sm:text-2xl lg:text-3xl text-neutral-800 mx-auto leading-[1.3] [font-family:var(--font-proto-mono-light)] max-w-[85%] sm:max-w-[80%] lg:max-w-[75%]">
+          <motion.p 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ 
+              duration: 0.8,
+              delay: 0.5,
+              ease: [0.21, 0.47, 0.32, 0.98]
+            }}
+            className="mt-4 sm:mt-6 lg:mt-8 text-lg sm:text-2xl lg:text-3xl text-neutral-800 mx-auto leading-[1.3] [font-family:var(--font-proto-mono-light)] max-w-[85%] sm:max-w-[80%] lg:max-w-[75%]"
+          >
             The Generalist Browser Agent<br className="block sm:hidden" /> for Everyone
-          </p>
-        </header>
+          </motion.p>
+        </motion.header>
 
         {/* Main Content */}
-        <main className="flex-grow flex flex-col mt-12 sm:mt-[8vh] lg:mt-[10vh]">
+        <motion.main 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ 
+            duration: 0.8,
+            delay: 0.7,
+            ease: [0.21, 0.47, 0.32, 0.98]
+          }}
+          className="flex-grow flex flex-col mt-12 sm:mt-[8vh] lg:mt-[10vh]"
+        >
           <div className="relative mx-auto flex max-w-3xl flex-col items-center w-full min-h-[calc(100dvh-20rem)] sm:min-h-[calc(100vh-28rem)] lg:min-h-[calc(100vh-36rem)] justify-between">
             {/* Claim Handle Form */}
             <div className="w-full flex flex-col items-center mt-0">
               <AnimatePresence>
                 {showInitialText && (
                   <motion.p 
-                    initial={{ opacity: 1, y: 0 }}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -20 }}
+                    transition={{ 
+                      duration: 0.6,
+                      delay: 0.9,
+                      ease: [0.21, 0.47, 0.32, 0.98]
+                    }}
                     className="text-base sm:text-lg lg:text-xl text-neutral-600 mb-6 sm:mb-8 lg:mb-10 text-center [font-family:var(--font-proto-mono-light)] will-change-transform px-3 sm:px-4"
                   >
                     Claim your personal operator
                   </motion.p>
                 )}
               </AnimatePresence>
-              <div className="w-full max-w-md z-10 relative mb-8 sm:mb-12 lg:mb-16 px-3 sm:px-0">
+              <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ 
+                  duration: 0.8,
+                  delay: 1.1,
+                  ease: [0.21, 0.47, 0.32, 0.98]
+                }}
+                className="w-full max-w-md z-10 relative mb-8 sm:mb-12 lg:mb-16 px-3 sm:px-0"
+              >
                 <ClaimHandleForm 
                   onComplete={handleFormComplete}
                   onStateChange={handleFormStateChange}
                 />
-              </div>
+              </motion.div>
             </div>
 
             {/* Container for Cursor Mountain */}
-            <div className="relative w-full aspect-[2/1] sm:aspect-[5/2] lg:aspect-[3/1] will-change-transform mt-auto overflow-hidden">
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 1, delay: 1.3 }}
+              className="relative w-full aspect-[2/1] sm:aspect-[5/2] lg:aspect-[3/1] will-change-transform mt-auto overflow-hidden"
+            >
               <div className="absolute inset-0 transition-opacity duration-500 flex items-end justify-center">
                 <div className="w-full max-w-3xl mx-auto h-full relative translate-y-[15%] sm:translate-y-[20%] lg:translate-y-[25%]">
                   <CursorMountain />
                 </div>
               </div>
-            </div>
+            </motion.div>
 
             {/* Footer Section */}
-            <footer className="w-full mt-2 sm:mt-4 lg:mt-6 flex flex-col items-center space-y-3 sm:space-y-4 lg:space-y-6 px-3 sm:px-4 pb-4 sm:pb-6 lg:pb-8">
+            <motion.footer 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ 
+                duration: 0.8,
+                delay: 1.5,
+                ease: [0.21, 0.47, 0.32, 0.98]
+              }}
+              className="w-full mt-2 sm:mt-4 lg:mt-6 flex flex-col items-center space-y-3 sm:space-y-4 lg:space-y-6 px-3 sm:px-4 pb-4 sm:pb-6 lg:pb-8"
+            >
               {/* Research Badge */}
               <motion.div 
                 className="flex items-center justify-center gap-1.5 sm:gap-2 px-3 sm:px-5 py-1.5 sm:py-2.5 bg-black/95 rounded-full cursor-default shadow-[0_2px_8px_rgba(0,0,0,0.08)]"
@@ -200,9 +290,9 @@ export default function Home() {
                   </svg>
                 </a>
               </div>
-            </footer>
+            </motion.footer>
           </div>
-        </main>
+        </motion.main>
       </div>
     </div>
   );
