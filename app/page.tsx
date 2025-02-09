@@ -59,13 +59,32 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#faf9f6] via-[#fff5e6] to-[#faf9f6] selection:bg-black selection:text-white overflow-hidden will-change-transform">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_120%,rgba(255,236,194,0.1),rgba(255,255,255,0)_50%)] will-change-transform" />
-      <AnimatePresence>
-        {showSuccess && <FloatingSuccess />}
-      </AnimatePresence>
+    <div className="min-h-screen relative overflow-hidden will-change-transform">
+      {/* Base gradient */}
+      <div className="absolute inset-0 bg-gradient-to-br from-[#fcfcfc] via-[#fafafa] to-[#f8f8f8] opacity-90" />
+      
+      {/* Noise texture */}
+      <div className="absolute inset-0 opacity-[0.15]" 
+        style={{ 
+          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
+          transform: 'translate3d(0, 0, 0)'
+        }} 
+      />
+
+      {/* Radial gradients */}
+      <div className="absolute inset-0">
+        <div className="absolute -top-[50%] -left-[50%] w-[200%] h-[200%] bg-[radial-gradient(circle_at_50%_50%,rgba(255,255,255,0.8),transparent_50%)] animate-slow-spin" />
+      </div>
+      <div className="absolute inset-0">
+        <div className="absolute top-0 left-[20%] w-[60%] h-[100%] bg-[radial-gradient(circle_at_50%_0%,rgba(250,249,246,0.4),transparent_60%)]" />
+      </div>
+
+      {/* Mesh gradient overlay */}
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,rgba(255,245,230,0.1),transparent_50%)] mix-blend-soft-light" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_80%,rgba(250,249,246,0.08),transparent_50%)] mix-blend-overlay" />
+      
       {showCompletion && <MouseSpeechBubble handle={handle} position={position} initialPosition={mousePosition} />}
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 py-12 sm:py-24 lg:px-8 relative z-10">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 py-8 sm:py-12 md:py-24 lg:px-8 relative z-10">
         {/* Header */}
         <header className="max-w-2xl mx-auto text-center relative will-change-transform">
           <Link 
@@ -73,17 +92,17 @@ export default function Home() {
             className="inline-block hover:opacity-80 transition-opacity"
           >
             <span className="sr-only">Go to Pointer home page</span>
-            <h1 className="text-4xl font-bold tracking-tight sm:text-6xl [text-wrap:balance] text-black fill-white [font-family:var(--font-proto-mono-semibold-shadow)] [text-shadow:0_0_1px_rgba(255,255,255,0.5)] will-change-transform">
+            <h1 className="text-3xl sm:text-4xl md:text-6xl font-bold tracking-tight [text-wrap:balance] text-black fill-white [font-family:var(--font-proto-mono-semibold-shadow)] [text-shadow:0_0_1px_rgba(255,255,255,0.5)] will-change-transform">
               Pointer
             </h1>
           </Link>
-          <p className="mt-4 sm:mt-6 text-base sm:text-lg text-black mx-auto leading-relaxed [font-family:var(--font-proto-mono-light)]">
+          <p className="mt-3 sm:mt-4 md:mt-6 text-sm sm:text-base md:text-lg text-black mx-auto leading-relaxed [font-family:var(--font-proto-mono-light)]">
             The Generalist Browser Agent for Everyone
           </p>
         </header>
 
         {/* Main Content */}
-        <main className="mt-12 sm:mt-24">
+        <main className="mt-8 sm:mt-12 md:mt-24">
           <div className="relative mx-auto flex max-w-3xl flex-col items-center">
             {/* Claim Handle Form */}
             <AnimatePresence>
@@ -91,13 +110,13 @@ export default function Home() {
                 <motion.p 
                   initial={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -20 }}
-                  className="text-sm sm:text-base text-neutral-500 mb-4 sm:mb-6 text-center [font-family:var(--font-proto-mono-light)] will-change-transform"
+                  className="text-xs sm:text-sm md:text-base text-neutral-500 mb-3 sm:mb-4 md:mb-6 text-center [font-family:var(--font-proto-mono-light)] will-change-transform"
                 >
                   Claim your personal operator
                 </motion.p>
               )}
             </AnimatePresence>
-            <div className="w-full max-w-md z-10 relative mb-12 sm:mb-24">
+            <div className="w-full max-w-md z-10 relative mb-8 sm:mb-12 md:mb-24">
               <ClaimHandleForm 
                 onComplete={handleFormComplete}
                 onStateChange={handleFormStateChange}
@@ -112,27 +131,31 @@ export default function Home() {
             </div>
 
             {/* Footer Section */}
-            <footer className="w-full mt-16 sm:mt-24 flex flex-col items-center space-y-8 sm:space-y-12 px-4">
+            <footer className="w-full mt-8 sm:mt-16 md:mt-24 flex flex-col items-center space-y-6 sm:space-y-8 md:space-y-12 px-4">
               {/* Research Badge */}
-              <div className="flex items-center justify-center gap-2 px-4 py-2 bg-neutral-50 rounded-full">
-                <span className="text-xs sm:text-sm [font-family:var(--font-proto-mono-light)] text-neutral-600">
+              <motion.div 
+                className="flex items-center justify-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 bg-black rounded-full cursor-default"
+                whileHover={{ scale: 1.02, backgroundColor: "rgba(0, 0, 0, 0.9)" }}
+                transition={{ type: "spring", stiffness: 400, damping: 17 }}
+              >
+                <span className="text-[10px] sm:text-xs md:text-sm [font-family:var(--font-proto-mono-light)] text-white">
                   Designed with HCI * AI research
                 </span>
-              </div>
+              </motion.div>
 
               {/* Domain and Year */}
-              <div className="text-center space-y-2">
+              <div className="text-center space-y-1.5 sm:space-y-2">
                 <a
                   href="https://trypointer.com"
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Visit trypointer.com (opens in new tab)"
-                  className="text-lg sm:text-xl [font-family:var(--font-proto-mono-semibold-shadow)] text-neutral-900 hover:text-black transition-colors inline-flex items-center gap-1.5 group"
+                  className="text-base sm:text-lg md:text-xl [font-family:var(--font-proto-mono-semibold-shadow)] text-neutral-900 hover:text-black transition-colors inline-flex items-center gap-1.5 group"
                 >
                   trypointer.com
                   <svg 
                     viewBox="0 0 15 15" 
-                    className="w-4 h-4 opacity-0 -translate-y-0.5 group-hover:opacity-100 transition-all duration-200"
+                    className="w-3 h-3 sm:w-4 sm:h-4 opacity-0 -translate-y-0.5 group-hover:opacity-100 transition-all duration-200"
                     fill="none"
                     aria-hidden="true"
                   >
@@ -144,7 +167,7 @@ export default function Home() {
                     />
                   </svg>
                 </a>
-                <p className="text-xs sm:text-sm [font-family:var(--font-proto-mono-light)] text-neutral-500">
+                <p className="text-[10px] sm:text-xs md:text-sm [font-family:var(--font-proto-mono-light)] text-neutral-500">
                   2025
                 </p>
               </div>
@@ -155,13 +178,13 @@ export default function Home() {
                   href="https://x.com/pointerinc" 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="p-2.5 rounded-full hover:bg-neutral-100 transition-colors group"
+                  className="p-2 sm:p-2.5 rounded-full hover:bg-neutral-100 transition-colors group"
                   aria-label="Follow @pointerinc on X (formerly Twitter)"
                 >
                   <svg 
                     viewBox="0 0 24 24" 
                     aria-hidden="true" 
-                    className="h-5 w-5 fill-neutral-600 group-hover:fill-neutral-900 transition-colors"
+                    className="h-4 w-4 sm:h-5 sm:w-5 fill-neutral-600 group-hover:fill-neutral-900 transition-colors"
                   >
                     <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
                   </svg>
